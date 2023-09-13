@@ -32,7 +32,7 @@ else
                 <td>@order.CinemaUser.Name</td>
                 <td>@order.MovieName</td>
                 <td>[
-                    @foreach (var seatNumber in order.Seats.OrderBy(s => s))
+                    @foreach (var seatNumber in order.Seats)
                     {
                         <span>@seatNumber </span>
                     }
