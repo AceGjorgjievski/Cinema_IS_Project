@@ -1,0 +1,248 @@
+﻿@model Cinema.Models.Domain.MovieBookDto
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Book Now - @Model.MovieName</h2>
+<img src="@Model.Movie.Image" style="height: 180px; width: 286px " alt="Card image cap">
+
+
+<div class="container">
+    <form id="checkingForm" asp-action="CheckSeats" method="get">
+        <input type="hidden" name="id" value="@Model.Id"/>
+        <select name="time" id="time">
+            @{
+                if (Model.SelectedTime != null)
+                {
+                    var currentDate = DateTime.Parse(DateTime.Now.Date.ToString("yyyy-MM-dd"));
+                    var currentTime = DateTime.Now.TimeOfDay;
+                    var timesToCheck = new TimeSpan[] { TimeSpan.Parse("09:00"), TimeSpan.Parse("12:00"), TimeSpan.Parse("15:00"), TimeSpan.Parse("18:00") };
+                    var upcomingTimes = timesToCheck.Where(t => t > currentTime).OrderBy(t => t).ToList();
+                    // var closestTime = upcomingTimes?.First();
+
+                    if (Model.SelectedTime.Equals("09:00"))
+                    {
+                        <option value="09:00" selected> 09:00</option>
+                        <option value="12:00"> 12:00</option>
+                        <option value="15:00"> 15:00</option>
+                        <option value="18:00"> 18:00</option>
+                    }
+                    else if (Model.SelectedTime.Equals("12:00") && 
+                             DateTime.Parse(Model.SelectedDate).Equals(currentDate) &&
+                             currentTime > TimeSpan.Parse("09:00"))
+                    {
+                        <option value="12:00" selected> 12:00</option>
+                        <option value="15:00"> 15:00</option>
+                        <option value="18:00"> 18:00</option>
+                    }
+                    else if (Model.SelectedTime.Equals("12:00") && DateTime.Parse(Model.SelectedDate) > currentDate)
+                    {
+                        <option value="09:00">09:00</option>
+                        <option value="12:00" selected> 12:00</option>
+                        <option value="15:00"> 15:00</option>
+                        <option value="18:00"> 18:00</option>
+                    } else if (Model.SelectedTime.Equals("15:00") && 
+                               DateTime.Parse(Model.SelectedDate).Equals(currentDate) &&
+                               currentTime > TimeSpan.Parse("12:00"))
+                    {
+                        <option value="15:00" selected> 15:00</option>
+                        <option value="18:00"> 18:00</option>
+                    }
+                    else if (Model.SelectedTime.Equals("15:00") && DateTime.Parse(Model.SelectedDate) > currentDate)
+                    {
+                        <option value="09:00"> 09:00</option>
+                        <option value="12:00"> 12:00</option>
+                        <option value="15:00" selected> 15:00</option>
+                        <option value="18:00"> 18:00</option>
+                    }
+                    else if (Model.SelectedTime.Equals("15:00") && DateTime.Parse(Model.SelectedDate).Equals(currentDate))
+                    {
+                        <option value="15:00" selected> 15:00</option>
+                        <option value="18:00"> 18:00</option>
+                    } else if (Model.SelectedTime.Equals("18:00") &&
+                                DateTime.Parse(Model.SelectedDate).Equals(currentDate) &&
+                               currentTime > TimeSpan.Parse("15:00"))
+                    {
+                        <option value="18:00" selected> 18:00</option>
+                    }
+                    else if (Model.SelectedTime.Equals("18:00") && DateTime.Parse(Model.SelectedDate) > currentDate)
+                    {
+                        <option value="09:00"> 09:00</option>
+                        <option value="12:00"> 12:00</option>
+                        <option value="15:00"> 15:00</option>
+                        <option value="18:00" selected> 18:00</option>
+                    }
+                }
+                else
+                {
+                    <option value="09:00"> 09:00</option>
+                    <option value="12:00"> 12:00</option>
+                    <option value="15:00"> 15:00</option>
+                    <option value="18:00"> 18:00</option>
+                }
+
+            }
+        </select>
+        <input type="date" id="date" name="date"
+               value="@(!string.IsNullOrWhiteSpace(Model.SelectedDate) && DateTime.TryParse(Model.SelectedDate, out var parsedDate) ? parsedDate.ToString("yyyy-MM-dd") : string.Empty)"
+               min="@Model.MinDate.ToString("yyyy-MM-dd")"
+               max="@Model.MaxDate.ToString("yyyy-MM-dd")"/>
+    </form>
+</div>
+
+
+<div>
+    <form method="post" asp-action="SeatOrder" asp-controller="Movies" id="bookingForm">
+        <input type="hidden" name="Id" value="@Model.Id"/>
+        <input type="hidden" name="selectedDate" value="@Model.SelectedDate"/>
+        <input type="hidden" name="selectedTime" value="@Model.SelectedTime"/>
+        <div class="container seat-section">
+            <h2>Please select your seat</h2>
+            <div class="symbol">
+                <i class="fas fa-square one"></i>&nbsp;<span>Already Booked</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <i class="fas fa-square two"></i>&nbsp;<span>Seat Available</span>
+            </div>
+            <div class="row seat-row">
+                <!-- Left side with 2 rows of 5 seats each -->
+                <div class="col-md-6">
+                    @for (int i = 0; i < 10; i++)
+                    {
+                        var seat = Model.SeatMap.Seats[i];
+                        if (i % 5 == 0)
+                        {
+                            // Start a new row for every 5 seats
+                            @:<div class="row">
+                        }
+
+                        var seatClass = seat.IsAvailable ? "btn-success" : "btn-danger";
+                        var isDisabled = !seat.IsAvailable;
+
+                        <label class="btn @(seatClass) seat-label">
+                            <input type="checkbox"
+                                   id="@("seatCheckbox" + seat.SeatNumber)"
+                                   name="seatIds"
+                                   class="seat-checkbox"
+                                   value="@seat.Id" @(isDisabled ? "disabled" : "")> @seat.SeatNumber
+                        </label>
+
+                        if (i % 5 == 4 || i == 9)
+                        {
+                            // Close the row tag after every 5 seats or at the end of the loop
+                            @:</div>
+                        }
+                    }
+                </div>
+
+                <!-- Right side with 2 rows of 5 seats each -->
+                <div class="col-md-6">
+                    @for (int i = 10; i < 20; i++)
+                    {
+                        var seat = Model.SeatMap.Seats[i]; // Adjust index to match the correct seat in your model
+
+                        if ((i - 10) % 5 == 0)
+                        {
+                            // Start a new row for every 5 seats
+                            @:<div class="row">
+                        }
+
+                        var seatClass = seat.IsAvailable ? "btn-success" : "btn-danger";
+                        var isDisabled = !seat.IsAvailable;
+
+                        <label class="btn @(seatClass) seat-label">
+                            <input type="checkbox"
+                                   id="@("seatCheckbox" + seat.SeatNumber)"
+                                   name="seatIds"
+                                   class="seat-checkbox"
+                                   value="@seat.Id" @(isDisabled ? "disabled" : "")> @seat.SeatNumber
+                        </label>
+
+                        if ((i - 10) % 5 == 4 || i == 19)
+                        {
+                            // Close the row tag after every 5 seats or at the end of the loop
+                            @:</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <button type="submit" id="bookSeatsButton" class="btn btn-primary" disabled>Book Selected Seats</button>
+
+
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+   $(document).ready(function () {
+           // Listen for changes on the checkboxes with class 'seat-checkbox'
+           $('.seat-checkbox').change(function () {
+               // Check if at least one checkbox is checked
+               var atLeastOneChecked = $('.seat-checkbox:checked').length > 0;
+   
+               // Enable or disable the button based on the check state
+               $('#bookSeatsButton').prop('disabled', !atLeastOneChecked);
+           });
+       });
+    
+
+    // Get form element and date/time select elements
+    const checkingForm = document.getElementById("checkingForm");
+    const dateSelect = document.getElementById("date");
+    const timeSelect = document.getElementById("time");
+
+    // Add event listeners to date and time selects
+    dateSelect.addEventListener("change", function () {
+        checkingForm.submit(); // Submit the form when date changes
+    });
+
+    timeSelect.addEventListener("change", function () {
+        checkingForm.submit(); // Submit the form when time changes
+    });
+    
+    // Get all seat buttons
+        const seatButtons = document.querySelectorAll(".seat-button");
+    
+        // Add click event listeners to toggle the "clicked" class
+        seatButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                this.classList.toggle("clicked");
+            });
+        });
+
+</script>
+
+<style>
+    /* CSS to style the buttons */
+    .seat-button {
+        background-color: transparent;
+        border: 1px solid #0eea37; /* Default border */
+        color: #0eea37; /* Default text color (green) */
+        padding: 5px 10px;
+        margin: 5px;
+        cursor: pointer;
+    }
+
+    
+    /* CSS to style the buttons when clicked */
+    .seat-button.clicked {
+        border: 2px solid #007bff; /* Change border when clicked */
+        background-color: #00f602; /* Change background color when clicked */
+        color: white; /* Change text color to white when clicked */
+    }
+    
+    /* CSS to style the buttons when seats are not available */
+    .seat-button.btn-danger {
+        border: 2px solid #f00; /* Red border for not available seats */
+        background-color: #f00; /* Red background color for not available seats */
+        color: white; /* Text color for not available seats */
+    }
+    
+    .seat-label {
+            margin-right: 10px; /* Adjust the margin as needed */
+        }
+
+
+</style>

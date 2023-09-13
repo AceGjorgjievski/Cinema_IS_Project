@@ -1,0 +1,50 @@
+﻿@model List<Cinema.Models.Domain.Order>
+
+@{
+    ViewBag.Title = "Tickets";
+    Layout = "_Layout";
+}
+
+<h2>Orders</h2>
+
+@if (Model == null || Model.Count < 1 || !Model.Any())
+{
+    <h2>There is no order made!</h2>
+}
+else
+{
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th class="col-md-1">Customer</th>
+            <th class="col">Movie Name</th>
+            <th class="col">Seats</th>
+            <th class="col">Total Price</th>
+            <th class="col">Booking Date</th>
+            <th class="col">Booking Time</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.CinemaUser.Name</td>
+                <td>@order.MovieName</td>
+                <td>[
+                    @foreach (var seatNumber in order.Seats)
+                    {
+                        <span>@seatNumber </span>
+                    }
+                    ]
+                </td>
+
+                <td>@order.TotalPrice</td>
+                <td>@order.BookingDate</td>
+                <td>@order.BookingTime</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot></tfoot>
+    </table>
+}

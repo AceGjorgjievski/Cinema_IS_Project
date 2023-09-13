@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>aspnet-Cinema-633A84A1-5991-488E-8478-6EE5A534889C</UserSecretsId>
+        <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.32" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.32" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.32" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.32" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.32" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.32" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\Migrations" />
+      <Folder Include="Migrations" />
+      <Folder Include="Pages" />
+    </ItemGroup>
+
+</Project>
