@@ -58,7 +58,6 @@ namespace Cinema.Controllers
                     var dateTimeKey = _context.DateTimeKeys
                         .FirstOrDefault(key => key.Date.Equals(formattedDate) && key.Time.Equals(time));
 
-
                     if (dateTimeKey != null)
                     {
                         //checking for seatMaps with the same date and time
@@ -87,31 +86,9 @@ namespace Cinema.Controllers
                                 _context.SeatMaps.Add(seatMap);
                                 _context.SaveChanges();
                             }
-                            //checking if there no seats but there are seatMaps with the same date and time
-                    
-                            // if (!_context.Seats.Any(s => s.DateTimeKey.Id.Equals(dateTimeKey) || s.Movie.Id.Equals(moiveId)))
-                            // {
-                            //     for (int j = 1; j <= 20; j++)
-                            //     {
-                            //         Seat seat = new Seat()
-                            //         {
-                            //             SeatNumber = j,
-                            //             IsAvailable = true,
-                            //             DateTimeKey = dateTimeKey,
-                            //             SeatPrice = 10
-                            //         };
-                            //         _context.Seats.Add(seat);
-                            //         _context.SaveChanges();
-                            //
-                            //     }
-                            // }
                         }
-                        
-                        
                     }
-
                 }
-
             }
 
         }

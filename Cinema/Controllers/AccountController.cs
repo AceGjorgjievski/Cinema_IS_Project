@@ -55,20 +55,6 @@ namespace Cinema.Controllers
                     var result = await userManager.CreateAsync(user, request.Password);
                     if (result.Succeeded)
                     {
-                        // Create and associate an Order for the user
-                        // var order = new Order
-                        // {
-                        //     CinemaUser = user, // Associate the Order with the user
-                        //     // Set other properties for the Order as needed
-                        // };
-                        //
-                        // // Add the Order to the context
-                        // _context.Orders.Add(order);
-                        // user.Or = order.Id;
-                        //
-                        // // Save changes to the database
-                        // await _context.SaveChangesAsync();
-        
                         return RedirectToAction("Login");
                     }
                     else
