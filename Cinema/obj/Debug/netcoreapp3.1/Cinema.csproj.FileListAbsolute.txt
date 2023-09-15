@@ -189,3 +189,5 @@ C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Repository.pdb
 C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Services.pdb
 C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Movies\Edit.cshtml.g.cs
 C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Movies\Delete.cshtml.g.cs
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\itextsharp.dll

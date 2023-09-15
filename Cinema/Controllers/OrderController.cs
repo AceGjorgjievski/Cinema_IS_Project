@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using Cinema.Services.Interface;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +36,38 @@ namespace Cinema.Controllers
 
             return View(allOrders);
         }
+        
+        //todo: error
+        public ActionResult GeneratePdf()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            Document document = new Document();
+
+            document.SetMargins(36, 36, 36, 36);
+            document.SetPageSize(PageSize.A4);
+
+            try
+            {
+                PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+                document.Open();
+
+                Paragraph paragraph = new Paragraph("Hello, this is your PDF content.");
+                document.Add(paragraph);
+
+                document.Close();
+                memoryStream.Position = 0;
+
+                return File(memoryStream, "application/pdf", "orders.pdf");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details
+                Console.WriteLine("Error generating PDF: " + ex.Message);
+                return Content("Error generating PDF");
+            }
+        }
+
+
 
 
 
