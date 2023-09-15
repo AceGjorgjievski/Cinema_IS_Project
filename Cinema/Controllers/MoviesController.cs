@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Cinema.Data;
 using Cinema.Models.Domain;
+using Cinema.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,16 +11,38 @@ namespace Cinema.Controllers
 {
     public class MoviesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public MoviesController(ApplicationDbContext context)
+        private readonly IMovieService _movieService;
+        private readonly ISeatService _seatService;
+        private readonly ISeatMapService _seatMapService;
+        private readonly ICinemaUserService _cinemaUserService;
+        private readonly IOrderService _orderService;
+        private readonly IDateTimeKeyService _dateTimeKeyService;
+        private readonly IHomeService _homeService;
+        
+        
+        public MoviesController(IMovieService movieService, 
+            ISeatService seatService, ICinemaUserService cinemaUserService, 
+            IOrderService orderService, IDateTimeKeyService dateTimeKeyService,
+            ISeatMapService seatMapService, IHomeService homeService)
         {
-            _context = context;
+            _movieService = movieService;
+            _seatService = seatService;
+            _cinemaUserService = cinemaUserService;
+            _orderService = orderService;
+            _dateTimeKeyService = dateTimeKeyService;
+            _seatMapService = seatMapService;
+            _homeService = homeService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Movies.ToListAsync());
+            DateTime today = DateTime.Now.Date;
+            DateTime[] targetDates = { today, today.AddDays(1), today.AddDays(2), today.AddDays(3) };
+            string[] times = { "09:00", "12:00", "15:00", "18:00" };
+            var allMovies = this._movieService.GetAllMovies();
+            this._homeService.AddSeatMaps(targetDates, times);
+
+            return View(allMovies);
         }
 
         public IActionResult Create()
@@ -30,15 +51,14 @@ namespace Cinema.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(
+        public IActionResult Create(
             [Bind("Id, Name, Description, Image, Director, Genre, Duration, Price")]
             Movie movie)
         {
             if (ModelState.IsValid)
             {
                 movie.Id = new Guid();
-                _context.Add(movie);
-                await _context.SaveChangesAsync();
+                this._movieService.CreateNewMovie(movie);
                 return RedirectToAction("Index", "Movies");
             }
 
@@ -46,152 +66,151 @@ namespace Cinema.Controllers
         }
 
 
-        public IActionResult Edit()
-        {
-            throw new System.NotImplementedException();
-        }
-
         [HttpGet]
-        public async Task<IActionResult> CheckSeats(Guid? id, string? time, string? date)
+        public IActionResult Edit(Guid? id)
         {
-            var movie = await _context.Movies.Where(z => z.Id.Equals(id)).FirstOrDefaultAsync();
-            MovieBookDto movieBookDto = new MovieBookDto(movie, time, date);
-
-            
-            movieBookDto.Id = id;
-            movieBookDto = this.SetDateAndTime(movieBookDto, time, date);
-            movieBookDto = this.AddSeatMapAndSeats(movieBookDto);
-            
-            
-            
-            return View(movieBookDto);
-        }
-        
-        private MovieBookDto AddSeatMapAndSeats(MovieBookDto dto)
-        {
-            dto.SeatMap = _context.SeatMaps
-                .FirstOrDefault(z => z.DateTimeKey.Date.Equals(dto.SelectedDate) && 
-                                     z.DateTimeKey.Time.Equals(dto.SelectedTime) &&
-                                     z.Movie.Name.Equals(dto.MovieName));
-
-            dto.SeatMap.Seats = _context.Seats
-                .Where(z => z.DateTimeKey.Date.Equals(dto.SelectedDate) && 
-                            z.DateTimeKey.Time.Equals(dto.SelectedTime) &&
-                            z.Movie.Name.Equals(dto.MovieName))
-                .OrderBy(z => z.SeatNumber)
-                .ToList();
-
-            return dto;
-        }
-
-        private MovieBookDto SetDateAndTime(MovieBookDto dto, string? time, string? date)
-        {
-            if (string.IsNullOrEmpty(time) && string.IsNullOrEmpty(date))
+            if (id == null)
             {
-                // Default date and time
-                var defaultDate = DateTime.Now.Date;
-                var defaultTime = TimeSpan.Parse("09:00");
-        
-                // Check if any of the times (9:00, 12:00, 15:00, 18:00) have passed
-                var currentTime = DateTime.Now.TimeOfDay;
-                var timesToCheck = new TimeSpan[] { TimeSpan.Parse("09:00"), TimeSpan.Parse("12:00"), TimeSpan.Parse("15:00"), TimeSpan.Parse("18:00") };
-                bool anyTimePassed = timesToCheck.Any(t => currentTime > t);
-
-                // If none of the times have passed, use the default date and time
-                if (!anyTimePassed)
-                {
-                    dto.SelectedDate = defaultDate.ToString("yyyy-MM-dd");
-                    dto.SelectedTime = defaultTime.ToString("hh\\:mm");
-                }
-                else
-                {
-                    // If any of the times have passed, find the closest upcoming time
-                    var upcomingTimes = timesToCheck.Where(t => t > currentTime).OrderBy(t => t).ToList();
-
-                    if (upcomingTimes.Any())
-                    {
-                        // Use the closest upcoming time
-                        var closestTime = upcomingTimes.First();
-                        dto.SelectedTime = closestTime.ToString("hh\\:mm");
-                        dto.SelectedDate = defaultDate.ToString("yyyy-MM-dd");
-                    }
-                    else
-                    {
-                        // If all times have passed, use the next day's date and the earliest time (9:00)
-                        dto.SelectedDate = defaultDate.AddDays(1).ToString("yyyy-MM-dd");
-                        dto.SelectedTime = "09:00";
-                        dto.MinDate = defaultDate.AddDays(1);
-                    }
-                }
+                return NotFound();
             }
-            else
+
+            var movie = _movieService.GetDetailsForMovie(id);
+            if (movie == null)
             {
-                dto.SelectedTime = time;
-                dto.SelectedDate = date;
+                return NotFound();
             }
-            
-            return dto;
+
+            return View(movie);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SeatOrder(Guid? Id, string[] seatIds, string selectedDate, string selectedTime)
+        public IActionResult Edit(Guid id,
+            [Bind("Id, Name, Director, Image, Description, Genre, Price, Duration")]
+            Movie movie)
+        {
+            if (!id.Equals(movie.Id))
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    this._movieService.UpdateExistingMovie(movie);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if(!MovieExists(movie.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(movie);
+        }
+
+        private bool MovieExists(Guid movieId)
+        {
+            return this._movieService.GetDetailsForMovie(movieId) != null;
+        }
+
+        [HttpGet]
+        public IActionResult CheckSeats(Guid? MovieId, string? time, string? date)
+        {
+            // var movie = await _context.Movies.Where(z => z.Id.Equals(MovieId)).FirstOrDefaultAsync();
+            // MovieBookDto movieBookDto = new MovieBookDto(movie, time, date);
+            //
+            //
+            // movieBookDto.Id = MovieId;
+            // movieBookDto = this.SetDateAndTime(movieBookDto, time, date);
+            // movieBookDto = this.AddSeatMapAndSeats(movieBookDto);
+            
+            
+            var movie2 = this._movieService.GetDetailsForMovie(MovieId);
+            var movieDto = _movieService.GetMovieBookDto(movie2, time, date);
+            
+            _movieService.MakeSeatsAvailableAgain(MovieId, time, date);
+            
+            
+            
+            
+            return View(movieDto);
+        }
+
+        [HttpPost]
+        public IActionResult SeatOrder(Guid? Id, string[] seatIds, string selectedDate, string selectedTime)
         {
             if (ModelState.IsValid)
             {
                 var seatGuids = seatIds.Select(Guid.Parse).ToList();
 
                 // Retrieve the seats based on their IDs
-                var seats = await _context.Seats.Where(z => seatGuids.Contains(z.Id)).ToListAsync();
-
+                // var seats = await _context.Seats.Where(z => seatGuids.Contains(z.Id)).ToListAsync();
+                var seats = this._seatService.GetAllSeats().Where(z => seatGuids.Contains(z.Id)).ToList();
                 // Get the current user
-                string customerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                Guid customerGuid = Guid.Parse(customerId);
+                // string customerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                // Guid customerGuid = Guid.Parse(customerId);
 
                 // Create a new Order
-                var movie = _context.Movies.FirstOrDefault(z => z.Id.Equals(Id));
-                var currentCustomer = _context.CinemaUsers.FirstOrDefault(u => u.Id == customerGuid);
+                // var movie = _context.Movies.FirstOrDefault(z => z.Id.Equals(Id));
+                var movie = this._movieService.GetDetailsForMovie(Id);
+                // var currentCustomer = _context.CinemaUsers.FirstOrDefault(u => u.Id == customerGuid);
+
+                var cinemaUser = this._cinemaUserService.GetCurrentUser(User);
 
                 // Create a new Order and set its properties
                 var currentOrder = new Order
                 {
+                    Id=Guid.NewGuid(),
                     MovieName = movie.Name,
                     TotalPrice = seats.Sum(z => z.SeatPrice),
                     BookingDate = selectedDate,
                     BookingTime = selectedTime,
-                    CinemaUser = currentCustomer,
-                    Seats = new List<int>()
+                    CinemaUser = cinemaUser,
+                    Seats = seats.Select(s => s.SeatNumber).ToList(),
+                    CinemaUserId = cinemaUser.Id
                 };
                 
+                currentOrder = _seatService.UpdateSeatAvailability(currentOrder, seats, false);
+                
+                cinemaUser.Orders = new List<Order>();
+                cinemaUser.Orders.Add(currentOrder);
+
+                // currentCustomer.Orders = new List<Order>();
+                // currentCustomer.Orders.Add(currentOrder);
+                
                 
 
-                // Mark the seats as unavailable
-                foreach (var seat in seats)
-                {
-                    seat.IsAvailable = false;
-                    currentOrder.Seats.Add(seat.SeatNumber);
-                }
-
-                currentCustomer.Orders = new List<Order>();
-                currentCustomer.Orders.Add(currentOrder);
-
                 
-                var dateTimeKey = _context.DateTimeKeys.FirstOrDefault(z => z.Date.Equals(selectedDate) && z.Time.Equals(selectedTime));
-
-                var seatMap = _context.SeatMaps.FirstOrDefault(z => z.DateTimeKey.Equals(dateTimeKey));
+                // var dateTimeKey = _context.DateTimeKeys.FirstOrDefault(z => z.Date.Equals(selectedDate) && z.Time.Equals(selectedTime));
+                var dateTimeKey = this._dateTimeKeyService.GetAllDateTimeKeys()
+                    .FirstOrDefault(z => z.Date.Equals(selectedDate) && z.Time.Equals(selectedTime));
+                
+                
+                // var seatMap = _context.SeatMaps.FirstOrDefault(z => z.DateTimeKey.Equals(dateTimeKey));
+                var seatMap = this._seatMapService.GetAllSeatMaps()
+                    .FirstOrDefault(z => z.DateTimeKey.Equals(dateTimeKey));
                 seatMap.Movie = movie;
-                seatMap.CinemaUser = currentCustomer;
+                seatMap.CinemaUser = cinemaUser;
+                this._seatMapService.UpdateExistingSeatMap(seatMap);
 
                 // Add the new order to the context
-                _context.Orders.Add(currentOrder);
+                this._orderService.CreateNewOrder(currentOrder);
+                // _context.Orders.Add(currentOrder);
 
                 // Save changes to the database
-                await _context.SaveChangesAsync();
+                // await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index", "Movies");
             }
 
             return null;
         }
-
     }
 }

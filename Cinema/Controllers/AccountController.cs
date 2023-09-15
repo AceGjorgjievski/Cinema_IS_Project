@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Cinema.Data;
-using Cinema.Models.Domain;
 using Cinema.Models.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,16 +12,13 @@ namespace Cinema.Controllers
     {
         private readonly UserManager<CinemaUser> userManager;
         private readonly SignInManager<CinemaUser> signInManager;
-        private readonly ApplicationDbContext _context; 
 
         public AccountController(
             UserManager<CinemaUser> userManager, 
-            SignInManager<CinemaUser> signInManager,
-            ApplicationDbContext context) 
+            SignInManager<CinemaUser> signInManager) 
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            _context = context; 
         }
 
         [HttpGet]

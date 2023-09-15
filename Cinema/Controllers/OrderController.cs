@@ -1,34 +1,37 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
-using Cinema.Data;
-using Cinema.Models.Domain;
+using Cinema.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Cinema.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IOrderService _orderService;
+        private readonly ICinemaUserService _cinemaUserService;
         
-        public OrderController(ApplicationDbContext context)
+        public OrderController(IOrderService orderService,
+            ICinemaUserService cinemaUserService)
         {
-            _context = context;
+            _orderService = orderService;
+            _cinemaUserService = cinemaUserService;
         }
         [Authorize]
         public IActionResult Index()
         {
             string customerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Guid customerGuid = Guid.Parse(customerId);
+
+            var currentCinemaUser = this._cinemaUserService.GetDetailsForCinemaUser(customerId);
 
             // Retrieve a list of orders for the current customer, including related entities
-            var orders = _context.Orders
-                .Include(c => c.CinemaUser)
-                .ToList();
+            var allOrders = _orderService.GetAllOrders();
 
-            return View(orders);
+            // var orders = _orderService.GetAllOrders()
+            //     .ToList().Where(z => z.CinemaUser.Id.Equals(customerId)).ToList();
+
+            return View(allOrders);
         }
 
 

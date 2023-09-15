@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Cinema.Data;
 using Cinema.Models.Identity;
+using Cinema.Repository;
+using Cinema.Repository.Interface;
+using Cinema.Repository.Implementation;
+using Cinema.Services.Implementation;
+using Cinema.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,12 +29,25 @@ namespace Cinema
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection")
+                    , b => b.MigrationsAssembly("Cinema")
             ));
             services.AddDefaultIdentity<CinemaUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 // .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+                
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(ICinemaUserRepository), typeof(CinemaUserRepository));   
 
             
+            services.AddTransient<ICinemaUserService, CinemaUserService>();
+            services.AddTransient<IDateTimeKeyService, DateTimeKeyService>();
+            services.AddTransient<IHomeService, HomeService>();
+            services.AddTransient<IMovieService, MovieService>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ISeatMapService, SeatMapService>();
+            services.AddTransient<ISeatService, SeatService>();
+
+
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

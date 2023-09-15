@@ -24,6 +24,9 @@
     ".NETCoreApp,Version=v3.1": {
       "Cinema/1.0.0": {
         "dependencies": {
+          "Cinema.Domain": "1.0.0",
+          "Cinema.Repository": "1.0.0",
+          "Cinema.Services": "1.0.0",
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "3.1.32",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "3.1.32",
           "Microsoft.AspNetCore.Identity.UI": "3.1.32",
@@ -2181,6 +2184,52 @@
           "System.Text.Encoding": "4.3.0",
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
+        }
+      },
+      "Cinema.Domain/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "3.1.32",
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "3.1.32",
+          "Microsoft.AspNetCore.Identity.UI": "3.1.32",
+          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.5",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "3.1.3"
+        },
+        "runtime": {
+          "Cinema.Domain.dll": {}
+        },
+        "compile": {
+          "Cinema.Domain.dll": {}
+        }
+      },
+      "Cinema.Repository/1.0.0": {
+        "dependencies": {
+          "Cinema.Domain": "1.0.0",
+          "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "3.1.32",
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "3.1.32",
+          "Microsoft.AspNetCore.Identity.UI": "3.1.32",
+          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.5",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "3.1.3"
+        },
+        "runtime": {
+          "Cinema.Repository.dll": {}
+        },
+        "compile": {
+          "Cinema.Repository.dll": {}
+        }
+      },
+      "Cinema.Services/1.0.0": {
+        "dependencies": {
+          "Cinema.Domain": "1.0.0",
+          "Cinema.Repository": "1.0.0",
+          "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "3.1.32",
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "3.1.32",
+          "Microsoft.AspNetCore.Identity.UI": "3.1.32"
+        },
+        "runtime": {
+          "Cinema.Services.dll": {}
+        },
+        "compile": {
+          "Cinema.Services.dll": {}
         }
       },
       "Microsoft.AspNetCore.Antiforgery/3.1.0.0": {
@@ -4785,6 +4834,21 @@
       "sha512": "sha512-5zJ0XDxAIg8iy+t4aMnQAu0MqVbqyvfoUVl1yDV61xdo3Vth45oA2FoY4pPkxYAH5f8ixpmTqXeEIya95x0aCQ==",
       "path": "system.xml.xdocument/4.3.0",
       "hashPath": "system.xml.xdocument.4.3.0.nupkg.sha512"
+    },
+    "Cinema.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Cinema.Repository/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Cinema.Services/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "Microsoft.AspNetCore.Antiforgery/3.1.0.0": {
       "type": "referenceassembly",

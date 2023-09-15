@@ -28,9 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\Migrations" />
-      <Folder Include="Migrations" />
       <Folder Include="Pages" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Cinema.Domain\Cinema.Domain.csproj" />
+      <ProjectReference Include="..\Cinema.Repository\Cinema.Repository.csproj" />
+      <ProjectReference Include="..\Cinema.Services\Cinema.Services.csproj" />
     </ItemGroup>
 
 </Project>

@@ -181,3 +181,10 @@ C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Movies\In
 C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Movies\Create.cshtml.g.cs
 C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Movies\CheckSeats.cshtml.g.cs
 C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Order\Index.cshtml.g.cs
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Domain.dll
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Repository.dll
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Services.dll
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Domain.pdb
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Repository.pdb
+C:\Users\Ace\Desktop\Cinema\Cinema\bin\Debug\netcoreapp3.1\Cinema.Services.pdb
+C:\Users\Ace\Desktop\Cinema\Cinema\obj\Debug\netcoreapp3.1\Razor\Views\Movies\Edit.cshtml.g.cs

@@ -11,84 +11,48 @@
 
 <div class="container">
     <form id="checkingForm" asp-action="CheckSeats" method="get">
-        <input type="hidden" name="id" value="@Model.Id"/>
-        <select name="time" id="time">
-            @{
-                if (Model.SelectedTime != null)
-                {
-                    var currentDate = DateTime.Parse(DateTime.Now.Date.ToString("yyyy-MM-dd"));
-                    var currentTime = DateTime.Now.TimeOfDay;
-                    var timesToCheck = new TimeSpan[] { TimeSpan.Parse("09:00"), TimeSpan.Parse("12:00"), TimeSpan.Parse("15:00"), TimeSpan.Parse("18:00") };
-                    var upcomingTimes = timesToCheck.Where(t => t > currentTime).OrderBy(t => t).ToList();
-                    // var closestTime = upcomingTimes?.First();
+        <input type="hidden" name="MovieId" value="@Model.Id"/>
+        <div class="form-group col-md-6">
+            <label for="time">Select Time</label>
+            <select name="time" id="time" class="form-control">
+                @{
 
-                    if (Model.SelectedTime.Equals("09:00"))
-                    {
-                        <option value="09:00" selected> 09:00</option>
-                        <option value="12:00"> 12:00</option>
-                        <option value="15:00"> 15:00</option>
-                        <option value="18:00"> 18:00</option>
-                    }
-                    else if (Model.SelectedTime.Equals("12:00") && 
-                             DateTime.Parse(Model.SelectedDate).Equals(currentDate) &&
-                             currentTime > TimeSpan.Parse("09:00"))
-                    {
-                        <option value="12:00" selected> 12:00</option>
-                        <option value="15:00"> 15:00</option>
-                        <option value="18:00"> 18:00</option>
-                    }
-                    else if (Model.SelectedTime.Equals("12:00") && DateTime.Parse(Model.SelectedDate) > currentDate)
+                    @if (Model.SelectedTime == null)
                     {
                         <option value="09:00">09:00</option>
-                        <option value="12:00" selected> 12:00</option>
-                        <option value="15:00"> 15:00</option>
-                        <option value="18:00"> 18:00</option>
-                    } else if (Model.SelectedTime.Equals("15:00") && 
-                               DateTime.Parse(Model.SelectedDate).Equals(currentDate) &&
-                               currentTime > TimeSpan.Parse("12:00"))
-                    {
-                        <option value="15:00" selected> 15:00</option>
-                        <option value="18:00"> 18:00</option>
+                        <option value="12:00">12:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="18:00">18:00</option>
                     }
-                    else if (Model.SelectedTime.Equals("15:00") && DateTime.Parse(Model.SelectedDate) > currentDate)
+                    else
                     {
-                        <option value="09:00"> 09:00</option>
-                        <option value="12:00"> 12:00</option>
-                        <option value="15:00" selected> 15:00</option>
-                        <option value="18:00"> 18:00</option>
-                    }
-                    else if (Model.SelectedTime.Equals("15:00") && DateTime.Parse(Model.SelectedDate).Equals(currentDate))
-                    {
-                        <option value="15:00" selected> 15:00</option>
-                        <option value="18:00"> 18:00</option>
-                    } else if (Model.SelectedTime.Equals("18:00") &&
-                                DateTime.Parse(Model.SelectedDate).Equals(currentDate) &&
-                               currentTime > TimeSpan.Parse("15:00"))
-                    {
-                        <option value="18:00" selected> 18:00</option>
-                    }
-                    else if (Model.SelectedTime.Equals("18:00") && DateTime.Parse(Model.SelectedDate) > currentDate)
-                    {
-                        <option value="09:00"> 09:00</option>
-                        <option value="12:00"> 12:00</option>
-                        <option value="15:00"> 15:00</option>
-                        <option value="18:00" selected> 18:00</option>
-                    }
-                }
-                else
-                {
-                    <option value="09:00"> 09:00</option>
-                    <option value="12:00"> 12:00</option>
-                    <option value="15:00"> 15:00</option>
-                    <option value="18:00"> 18:00</option>
-                }
+                        var currentSelectedDate = DateTime.Parse(Model.SelectedDate).ToString("yyyy-MM-dd");
+                        var currentTime = DateTime.Now.TimeOfDay;
+                        var timesToCheck = new List<TimeSpan> { TimeSpan.Parse("09:00"), TimeSpan.Parse("12:00"), TimeSpan.Parse("15:00"), TimeSpan.Parse("18:00") };
+                        string currentDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
 
-            }
-        </select>
-        <input type="date" id="date" name="date"
-               value="@(!string.IsNullOrWhiteSpace(Model.SelectedDate) && DateTime.TryParse(Model.SelectedDate, out var parsedDate) ? parsedDate.ToString("yyyy-MM-dd") : string.Empty)"
-               min="@Model.MinDate.ToString("yyyy-MM-dd")"
-               max="@Model.MaxDate.ToString("yyyy-MM-dd")"/>
+                        foreach (var time in timesToCheck)
+                        {
+                            string formattedTime = time.ToString("hh\\:mm");
+
+                            bool shouldSelect = Model.SelectedTime.Equals(formattedTime);
+                            if (currentTime > time && currentSelectedDate.Equals(currentDate)) continue;
+
+                            @:<option value="@formattedTime" @(shouldSelect ? "selected" : "")>@formattedTime</option>
+                        }
+                    }
+
+                }
+            </select>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="time">Select Date</label>
+            <input type="date" id="date" name="date" class="form-control"
+                   value="@(!string.IsNullOrWhiteSpace(Model.SelectedDate) && DateTime.TryParse(Model.SelectedDate, out var parsedDate) ? parsedDate.ToString("yyyy-MM-dd") : string.Empty)"
+                   min="@Model.MinDate.ToString("yyyy-MM-dd")"
+                   max="@Model.MaxDate.ToString("yyyy-MM-dd")"/>
+        </div>
     </form>
 </div>
 
@@ -101,74 +65,84 @@
         <div class="container seat-section">
             <h2>Please select your seat</h2>
             <div class="symbol">
-                <i class="fas fa-square one"></i>&nbsp;<span>Already Booked</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                <i class="fas fa-square two"></i>&nbsp;<span>Seat Available</span>
-            </div>
-            <div class="row seat-row">
-                <!-- Left side with 2 rows of 5 seats each -->
-                <div class="col-md-6">
-                    @for (int i = 0; i < 10; i++)
-                    {
-                        var seat = Model.SeatMap.Seats[i];
-                        if (i % 5 == 0)
-                        {
-                            // Start a new row for every 5 seats
-                            @:<div class="row">
-                        }
+                <div class="symbol">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-square" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12" fill="red"/>
+                    </svg>
+                    <i class="bi bi-square"></i>&nbsp;<span>Already Booked</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-square" viewBox="0 0 16 16">
+                      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12" fill="green"/>
+                    </svg>
 
-                        var seatClass = seat.IsAvailable ? "btn-success" : "btn-danger";
-                        var isDisabled = !seat.IsAvailable;
-
-                        <label class="btn @(seatClass) seat-label">
-                            <input type="checkbox"
-                                   id="@("seatCheckbox" + seat.SeatNumber)"
-                                   name="seatIds"
-                                   class="seat-checkbox"
-                                   value="@seat.Id" @(isDisabled ? "disabled" : "")> @seat.SeatNumber
-                        </label>
-
-                        if (i % 5 == 4 || i == 9)
-                        {
-                            // Close the row tag after every 5 seats or at the end of the loop
-                            @:</div>
-                        }
-                    }
+                    <i class="bi bi-square"></i>&nbsp;<span>Seat Available</span>
                 </div>
-
-                <!-- Right side with 2 rows of 5 seats each -->
-                <div class="col-md-6">
-                    @for (int i = 10; i < 20; i++)
-                    {
-                        var seat = Model.SeatMap.Seats[i]; // Adjust index to match the correct seat in your model
-
-                        if ((i - 10) % 5 == 0)
+                <br/>
+                <div class="row seat-row">
+                    <!-- Left side with 2 rows of 5 seats each -->
+                    <div class="col-md-6">
+                        @for (int i = 0; i < 10; i++)
                         {
-                            // Start a new row for every 5 seats
-                            @:<div class="row">
+                            var seat = Model.SeatMap.Seats[i];
+                            if (i % 5 == 0)
+                            {
+                                // Start a new row for every 5 seats
+                                @:<div class="row">
+                            }
+
+                            var seatClass = seat.IsAvailable ? "btn-success" : "btn-danger";
+                            var isDisabled = !seat.IsAvailable;
+
+                            <label class="btn @(seatClass) seat-label">
+                                <input type="checkbox"
+                                       id="@("seatCheckbox" + seat.SeatNumber)"
+                                       name="seatIds"
+                                       class="seat-checkbox"
+                                       value="@seat.Id" @(isDisabled ? "disabled" : "")> @seat.SeatNumber
+                            </label>
+
+                            if (i % 5 == 4 || i == 9)
+                            {
+                                // Close the row tag after every 5 seats or at the end of the loop
+                                @:</div>
+                            }
                         }
+                    </div>
 
-                        var seatClass = seat.IsAvailable ? "btn-success" : "btn-danger";
-                        var isDisabled = !seat.IsAvailable;
-
-                        <label class="btn @(seatClass) seat-label">
-                            <input type="checkbox"
-                                   id="@("seatCheckbox" + seat.SeatNumber)"
-                                   name="seatIds"
-                                   class="seat-checkbox"
-                                   value="@seat.Id" @(isDisabled ? "disabled" : "")> @seat.SeatNumber
-                        </label>
-
-                        if ((i - 10) % 5 == 4 || i == 19)
+                    <!-- Right side with 2 rows of 5 seats each -->
+                    <div class="col-md-6">
+                        @for (int i = 10; i < 20; i++)
                         {
-                            // Close the row tag after every 5 seats or at the end of the loop
-                            @:</div>
+                            var seat = Model.SeatMap.Seats[i]; // Adjust index to match the correct seat in your model
+
+                            if ((i - 10) % 5 == 0)
+                            {
+                                // Start a new row for every 5 seats
+                                @:<div class="row">
+                            }
+
+                            var seatClass = seat.IsAvailable ? "btn-success" : "btn-danger";
+                            var isDisabled = !seat.IsAvailable;
+
+                            <label class="btn @(seatClass) seat-label">
+                                <input type="checkbox"
+                                       id="@("seatCheckbox" + seat.SeatNumber)"
+                                       name="seatIds"
+                                       class="seat-checkbox"
+                                       value="@seat.Id" @(isDisabled ? "disabled" : "")> @seat.SeatNumber
+                            </label>
+
+                            if ((i - 10) % 5 == 4 || i == 19)
+                            {
+                                // Close the row tag after every 5 seats or at the end of the loop
+                                @:</div>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
+            <button type="submit" id="bookSeatsButton" class="btn btn-primary" disabled>Book Selected Seats</button>
+
         </div>
-        <button type="submit" id="bookSeatsButton" class="btn btn-primary" disabled>Book Selected Seats</button>
-
 
     </form>
 </div>

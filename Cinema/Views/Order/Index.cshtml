@@ -29,7 +29,8 @@ else
         @foreach (var order in Model)
         {
             <tr>
-                <td>@order.CinemaUser.Name</td>
+                @* <td>@order.CinemaUser.Name</td> *@
+                <td></td>
                 <td>@order.MovieName</td>
                 <td>[
                     @foreach (var seatNumber in order.Seats.OrderBy(s => s))
