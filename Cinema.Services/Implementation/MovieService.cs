@@ -48,9 +48,40 @@ namespace Cinema.Services.Implementation
 
         public void DeleteMovie(Guid id)
         {
+            this.DeleteSeatsForMovie(id);
+            this.DeleteSeatMapsForMovie(id);
             Movie m = this.GetDetailsForMovie(id);
             this._movieRepository.Delete(m);
         }
+
+        private void DeleteSeatsForMovie(Guid movieId)
+        {
+
+            var seatsToDelete = this._seatRepository
+                .GetAllIncluding(z => z.DateTimeKey, z => z.Movie)
+                .Where(z => z.Movie.Id.Equals(movieId))
+                .ToList();
+
+            
+            foreach (var seat in seatsToDelete)
+            {
+                _seatRepository.Delete(seat);
+            }
+        }
+        
+        private void DeleteSeatMapsForMovie(Guid movieId)
+        {
+            // Find seat maps associated with the given movieId and delete them
+            var seatMapsToDelete = _seatMapRepository
+                .GetAllIncluding(z => z.DateTimeKey, z=>z.Movie)
+                .Where(z => z.Movie != null && z.Movie.Id.Equals(movieId))
+                .ToList();
+            foreach (var seatMap in seatMapsToDelete)
+            {
+                _seatMapRepository.Delete(seatMap);
+            }
+        }
+
 
         public MovieBookDto GetMovieBookDto(Movie movie, string time, string date)
         {
