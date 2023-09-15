@@ -114,6 +114,50 @@ namespace Cinema.Controllers
             }
             return View(movie);
         }
+        
+        public IActionResult Delete(Guid? id)
+        {
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var movie = _movieService.GetDetailsForMovie(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            return View(movie);
+        }
+        
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(Guid id)
+        {
+
+            this._movieService.DeleteMovie(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        
+        // public IActionResult Delete(Guid? id)
+        // {
+        //     // Check if the movie exists
+        //    
+        //     if (movie == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //
+        //     // Use the service to delete the movie (you need to implement this method in your service)
+        //     _movieService.DeleteMovie(id);
+        //
+        //     // Redirect to the movie list after deletion
+        //     return RedirectToAction(nameof(Index));
+        // }
+
 
         private bool MovieExists(Guid movieId)
         {
@@ -195,10 +239,11 @@ namespace Cinema.Controllers
                 
                 // var seatMap = _context.SeatMaps.FirstOrDefault(z => z.DateTimeKey.Equals(dateTimeKey));
                 var seatMap = this._seatMapService.GetAllSeatMaps()
-                    .FirstOrDefault(z => z.DateTimeKey.Equals(dateTimeKey));
-                seatMap.Movie = movie;
+                    .FirstOrDefault(z => z.DateTimeKey != null && z.DateTimeKey.Id.Equals(dateTimeKey.Id)
+                                                               && z.Movie != null && z.Movie.Name.Equals(movie.Name));
+
                 seatMap.CinemaUser = cinemaUser;
-                this._seatMapService.UpdateExistingSeatMap(seatMap);
+                // this._seatMapService.UpdateExistingSeatMap(seatMap);
 
                 // Add the new order to the context
                 this._orderService.CreateNewOrder(currentOrder);
