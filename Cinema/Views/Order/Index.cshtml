@@ -47,6 +47,9 @@ else
         </tbody>
         <tfoot></tfoot>
     </table>
-    <a href="@Url.Action("GeneratePdf", "Order")" asp-rou>Export to PDF</a>
+    @if (Model != null && Model.Count > 0)
+    {
+        <a href="@Url.Action("GeneratePdf", "Order")">Export to PDF</a>
+    }
 
 }
