@@ -70,7 +70,7 @@ namespace Cinema.Controllers
 
             
             document.Content.Replace("{{MovieList}}", sb.ToString());
-            document.Content.Replace("{{TotalPrice}}", totalPrice.ToString()+"$");
+            document.Content.Replace("{{TotalPrice}}", totalPrice + "$");
 
             var stream = new MemoryStream();
             document.Save(stream, new PdfSaveOptions());
