@@ -26,7 +26,7 @@ tickets. With its robust architecture and intuitive interface,
 users can easily browse and book movies while administrators 
 can efficiently manage bookings and theater operations.
 
-###Image preview of the Web Application
+### Image preview of the Web Application
 
 ![img_5.png](img_5.png)
 *Figure 1: All movies listed in the 'Movies' tab.*
