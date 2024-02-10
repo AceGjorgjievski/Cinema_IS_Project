@@ -13,9 +13,8 @@ namespace Cinema.Models.Domain
         public string BookingDate { get; set; }
         public string BookingTime { get; set; }
         
-        // public Guid CinemaUserId { get; set; }
-        public string CinemaUserId { get; set; }
         public CinemaUser CinemaUser { get; set; }
+        public string CinemaUserId { get; set; }
 
         public Order()
         {

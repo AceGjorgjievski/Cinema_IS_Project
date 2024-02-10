@@ -7,3 +7,12 @@ C:\Users\Ace\Desktop\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.
 C:\Users\Ace\Desktop\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.csproj.CoreCompileInputs.cache
 C:\Users\Ace\Desktop\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.dll
 C:\Users\Ace\Desktop\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.pdb
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\bin\Debug\netcoreapp3.1\Cinema.Domain.deps.json
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\bin\Debug\netcoreapp3.1\Cinema.Domain.dll
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\bin\Debug\netcoreapp3.1\Cinema.Domain.pdb
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.csprojAssemblyReference.cache
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.AssemblyInfoInputs.cache
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.AssemblyInfo.cs
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.dll
+C:\Users\Ace\Desktop\ASP.NET_Projects\Cinema\Cinema.Domain\obj\Debug\netcoreapp3.1\Cinema.Domain.pdb

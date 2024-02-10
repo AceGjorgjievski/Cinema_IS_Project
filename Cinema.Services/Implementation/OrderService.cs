@@ -24,14 +24,24 @@ namespace Cinema.Services.Implementation
 
         public List<Order> GetAllOrdersForUser(string name)
         {
-            return this._orderRepository.GetAll().Where(z => z.CinemaUser.UserName.Equals(name))
+            var orders = this._orderRepository.GetAll()
+                .Where(z => z.CinemaUserId != null && z.CinemaUserId.Equals(name))
                 .ToList();
+    
+            if (orders.Count == 0)
+            {
+                return new List<Order>();
+            }
+    
+            return orders;
         }
+
 
         public List<Order> GetAllOrdersForUser(Guid? id)
         {
-            return this._orderRepository.GetAll().Where(z => z.CinemaUser.Id.Equals(id))
-                .ToList();
+            return null;
+            // return this._orderRepository.GetAll().Where(z => z.CinemaUserId.Equals(id))
+            //     .ToList();
         }
 
         public Order GetDetailsForOrder(Guid? id)

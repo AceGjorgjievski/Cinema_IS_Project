@@ -216,14 +216,14 @@ namespace Cinema.Controllers
                     TotalPrice = seats.Sum(z => z.SeatPrice),
                     BookingDate = selectedDate,
                     BookingTime = selectedTime,
-                    CinemaUser = cinemaUser,
+                    // CinemaUser = cinemaUser,
                     Seats = seats.Select(s => s.SeatNumber).ToList(),
                     CinemaUserId = cinemaUser.Id
                 };
                 
                 currentOrder = _seatService.UpdateSeatAvailability(currentOrder, seats, false);
-                
-                cinemaUser.Orders = new List<Order>();
+
+                cinemaUser.Orders = cinemaUser.Orders ?? new List<Order>();
                 cinemaUser.Orders.Add(currentOrder);
 
                 // currentCustomer.Orders = new List<Order>();

@@ -215,7 +215,7 @@ namespace Cinema.Services.Implementation
             
             
             if(DateTime.Parse(dto.SelectedDate) > DateTime.Now.Date &&
-               currentTime2 > TimeSpan.Parse(time))
+               currentTime2 > TimeSpan.Parse(dto.SelectedTime))
             {
                 dto.MinDate = DateTime.Now.Date.AddDays(1);
             }

@@ -29,8 +29,7 @@ else
         @foreach (var order in Model)
         {
             <tr>
-                @* <td>@order.CinemaUser.Name</td> *@
-                <td></td>
+                <td>@order.CinemaUser.Name</td>
                 <td>@order.MovieName</td>
                 <td>[
                     @foreach (var seatNumber in order.Seats.OrderBy(s => s))
@@ -48,6 +47,6 @@ else
         </tbody>
         <tfoot></tfoot>
     </table>
-    <a href="@Url.Action("GeneratePdf", "Order")">Export to PDF</a>
+    <a href="@Url.Action("GeneratePdf", "Order")" asp-rou>Export to PDF</a>
 
 }
